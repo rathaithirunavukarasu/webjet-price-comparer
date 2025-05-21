@@ -1,0 +1,32 @@
+﻿version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  webjet-api:
+    build:
+      context: ./api/WebjetPriceComparer
+    container_name: webjet-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__Redis=redis:6379
+
+  webjet-ui:
+    build:
+      context: ./client/movie-price-comparer
+    container_name: webjet-ui
+    ports:
+      - "80:80"
+    depends_on:
+      - webjet-api
+    environment:
+      - REACT_APP_MOVIE_API=http://webjet-api:8080/api
+      - REACT_APP_PLACEHOLDER_IMAGE=https://dummyimage.com/300x450/eeeeee/000000&text=No+Preview

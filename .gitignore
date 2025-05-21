@@ -1,0 +1,60 @@
+##########################################
+# General
+##########################################
+.DS_Store
+Thumbs.db
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+##########################################
+# Node.js / React Projects
+##########################################
+**/node_modules/
+**/dist/
+**/build/
+**/coverage/
+**/public/build/
+**/.parcel-cache/
+**/.turbo/
+**/.next/
+**/.vite/
+
+##########################################
+# .NET / C# Projects
+##########################################
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+**/.vs/
+**/TestResults/
+**/*.ide
+**/*.pdb
+**/*.cache
+**/*.mdb
+**/*.dbmdl
+**/Generated_Code/
+
+# Entity Framework Migrations snapshots
+**/Migrations/*.Designer.cs
+**/Migrations/*.resx
+
+##########################################
+# OS and Editor
+##########################################
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.bak
+*.tmp
+
+##########################################
+# Optional: Keep empty folders with .gitkeep
+##########################################
+!.gitkeep
