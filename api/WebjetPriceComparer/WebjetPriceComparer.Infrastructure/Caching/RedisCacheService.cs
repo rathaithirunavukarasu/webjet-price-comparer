@@ -27,28 +27,39 @@ public class RedisCacheService : ICacheService
     /// <inheritdoc/>
     public async Task<T?> GetOrSetAsync<T>(string key, Func<Task<T>> getData, int cacheSeconds = 300)
     {
-        var cached = await _cache.GetStringAsync(key);
-        if (!string.IsNullOrEmpty(cached))
+        try
         {
-            _logger.LogInformation("Cache hit for key: {CacheKey}", key);
-            return JsonSerializer.Deserialize<T>(cached);
+            var cached = await _cache.GetStringAsync(key);
+            if (!string.IsNullOrEmpty(cached))
+            {
+                _logger.LogInformation("Cache hit for key: {CacheKey}", key);
+                return JsonSerializer.Deserialize<T>(cached);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Redis get failed for key: {CacheKey}", key);
         }
 
         var data = await getData();
+        if (data is null || IsEmpty(data))
+        {
+            _logger.LogInformation("Skipping cache set for key: {CacheKey} (null or empty)", key);
+            return data;
+        }
 
-        if (data is not null && !IsEmpty(data))
+        try
         {
             var json = JsonSerializer.Serialize(data);
             await _cache.SetStringAsync(key, json, new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(cacheSeconds)
             });
-
             _logger.LogInformation("Cached data for key: {CacheKey}", key);
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogInformation("Skipping cache set for key: {CacheKey} because data is null or empty", key);
+            _logger.LogError(ex, "Redis set failed for key: {CacheKey}", key);
         }
 
         return data;
