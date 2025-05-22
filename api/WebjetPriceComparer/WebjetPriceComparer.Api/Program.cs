@@ -1,3 +1,4 @@
+using WebjetPriceComparer.Api.Middlewares;
 using WebjetPriceComparer.Application.Interfaces;
 using WebjetPriceComparer.Application.Services;
 using WebjetPriceComparer.Infrastructure.DI;
@@ -15,6 +16,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -29,7 +31,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
+app.UseExceptionHandler(_ => { });
 app.UseCors("AllowAll");
 app.UseAuthorization();
 
